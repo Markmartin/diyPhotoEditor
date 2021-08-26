@@ -4,7 +4,7 @@
     <div class="content">
       <div class="title">{{ title }}</div>
       <mu-text-field class="order-input" v-model="orderNo" placeholder="请在此处粘贴订单号" icon="search" full-width />
-      <mu-button class="order-submit" color="primary" full-width @click="jumpToScene">订单获取</mu-button>
+      <mu-button class="order-submit" color="primary" full-width @click="gotoScene">订单获取</mu-button>
     </div>
     <img class="footer" :src="footerSrc" />
   </div>
@@ -24,7 +24,7 @@ export default {
     }
   },
   methods: {
-    jumpToScene() {
+    gotoScene() {
       this.$router.push({ name: 'Scene' })
     }
   }

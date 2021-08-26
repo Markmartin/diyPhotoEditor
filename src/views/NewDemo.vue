@@ -25,12 +25,12 @@
 </template>
 
 <script>
-import bgImage from "@/assets/BG.png";
-import bgBodyLayerImage from "@/assets/BG_Body_Layer.png";
-import bgWidgetLayerImage from "@/assets/BG_Widget_Layer.png";
-import avatar from "@/assets/avatar.png";
-import Drr from "@/components/Drr.vue";
-import domtoimage from "dom-to-image-scale";
+import bgImage from '@/assets/BG.png'
+import bgBodyLayerImage from '@/assets/BG_Body_Layer.png'
+import bgWidgetLayerImage from '@/assets/BG_Widget_Layer.png'
+import avatar from '@/assets/avatar.png'
+import Drr from '@/components/Drr.vue'
+import domtoimage from 'dom-to-image-scale'
 
 export default {
   components: { Drr },
@@ -46,7 +46,7 @@ export default {
           width: 59,
           height: 97,
           rotation: 0,
-          src: avatar,
+          src: avatar
         },
         {
           x: 230,
@@ -54,38 +54,38 @@ export default {
           width: 59,
           height: 97,
           rotation: 0,
-          src: avatar,
-        },
+          src: avatar
+        }
       ],
 
       imageSrc: null,
-      imageLayerSrc: null,
-    };
+      imageLayerSrc: null
+    }
   },
   mounted() {},
   methods: {
     generate() {
-      const _this = this;
-      const imageNode = document.getElementById("image-container");
-      const imageLayerNode = document.getElementById("layer-container");
+      const _this = this
+      const imageNode = document.getElementById('image-container')
+      const imageLayerNode = document.getElementById('layer-container')
       domtoimage
-        .toPng(imageNode, { bgcolor: "#ffffff" })
+        .toPng(imageNode, { bgcolor: '#ffffff' })
         .then(async function(dataUrl) {
-          _this.imageSrc = dataUrl;
+          _this.imageSrc = dataUrl
         })
         .catch(function(error) {
-          console.error("生成海报失败", error);
-        });
+          console.error('生成海报失败', error)
+        })
 
       domtoimage
-        .toPng(imageLayerNode, { bgcolor: "#ffffff" })
+        .toPng(imageLayerNode, { bgcolor: '#ffffff' })
         .then(async function(dataUrl) {
-          _this.imageLayerSrc = dataUrl;
+          _this.imageLayerSrc = dataUrl
         })
         .catch(function(error) {
-          console.error("生成海报失败", error);
-        });
-    },
+          console.error('生成海报失败', error)
+        })
+    }
   },
   computed: {
     avatarStyle() {
@@ -94,11 +94,11 @@ export default {
         top: `${this.avatarRect.y}px`,
         width: `${this.avatarRect.width}px`,
         height: `${this.avatarRect.height}px`,
-        transform: `rotate(${this.avatarRect.rotation}deg)`,
-      };
-    },
-  },
-};
+        transform: `rotate(${this.avatarRect.rotation}deg)`
+      }
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

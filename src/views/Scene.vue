@@ -4,7 +4,7 @@
       <div class="gird-scene">
         <div class="scene-view" v-for="(item, index) in scenes" :key="index">
           <img class="scene-image" :src="item.url" />
-          <div class="select-button">选择这个</div>
+          <mu-button class="select-button" round color="success" @click="gotoEditor">选择这个</mu-button>
         </div>
       </div>
     </mu-load-more>
@@ -45,6 +45,9 @@ export default {
     loadMore() {
       this.page = { ...this.paper, pageNum: ++this.paper.pageNum }
       this.loadScene()
+    },
+    gotoEditor() {
+      this.$router.push({ name: 'Editor' })
     }
   }
 }
@@ -52,7 +55,7 @@ export default {
 
 <style lang="scss" scoped>
 $scene-width: 49vw;
-$scene-height: 49vw;
+$scene-height: calc(49vw + 45px);
 
 .scene {
   position: relative;
@@ -65,25 +68,32 @@ $scene-height: 49vw;
     grid-template-rows: $scene-height $scene-height;
     grid-row-gap: 2vw;
     grid-column-gap: 2vw;
+    background-color: wheat;
+
     .scene-view {
       position: relative;
       width: $scene-width;
       height: $scene-height;
+      background-color: white;
+      border-radius: 10px;
+      border: 5px solid white;
       .scene-image {
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        width: $scene-width;
+        height: $scene-width;
       }
 
       .select-button {
         position: absolute;
-        left: 10%;
-        bottom: 10px;
-        width: 80%;
-        height: 30px;
-        line-height: 30px;
+        left: calc(24vw - 60px);
+        bottom: 0;
+        width: 120px;
+        height: 25px;
+        line-height: 25px;
+        border: 1px solid transparent;
+        border-radius: 5vw;
       }
     }
   }
