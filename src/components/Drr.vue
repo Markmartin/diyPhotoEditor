@@ -20,19 +20,20 @@
       @touchstart.stop.prevent="stickDown(stick, $event)"
       :style="drrStick(stick)"
     ></div>
+
     <div class="ro-stick-handle" v-if="rotatable"></div>
     <div
       class="drr-stick-image"
       :class="[resizable ? '' : 'not-resizable']"
       @mousedown.stop.prevent="toggleMirror"
       @touchstart.stop.prevent="toggleMirror"
-    ></div>
+    />
     <div
       class="drr-stick-del"
       :class="[resizable ? '' : 'not-resizable']"
       @mousedown.stop.prevent="deleteSelf"
       @touchstart.stop.prevent="deleteSelf"
-    ></div>
+    />
   </div>
 </template>
 
@@ -672,15 +673,25 @@ export default {
   top: 50%;
   cursor: ew-resize;
 }
+.drr-stick-br {
+  width: 20px !important;
+  height: 20px !important;
+  right: -10px !important;
+  bottom: -10px !important;
+  background: url('../assets/icon/stretch.png') center no-repeat;
+  background-size: cover;
+  border: none !important;
+  box-shadow: none !important;
+}
 
 .drr-stick-image {
   box-sizing: border-box;
   position: absolute;
   width: 20px;
   height: 20px;
-  right: -10px;
-  top: -10px;
-  background: url('../assets/mirror.png') center no-repeat;
+  right: -12px;
+  top: -12px;
+  background: url('../assets/icon/mirror.png') center no-repeat;
   background-size: cover;
   z-index: 999;
   &.not-resizable {
@@ -693,9 +704,9 @@ export default {
   position: absolute;
   width: 20px;
   height: 20px;
-  bottom: -10px;
-  left: -10px;
-  background: url('../assets/del.png') center no-repeat;
+  bottom: -12px;
+  left: -12px;
+  background: url('../assets/icon/del.png') center no-repeat;
   background-size: cover;
   z-index: 999;
   &.not-resizable {

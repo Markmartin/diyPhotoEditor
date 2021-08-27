@@ -6,27 +6,26 @@
       <div class="layer-container" id="second-layer">
         <!-- 身体挂件layer -->
         <img class="layer-template" :src="bgBodyLayerSrc" />
-        <div class="layer-container" id="third-layer">
-          <!-- 挂件layer -->
-          <img class="layer-template" :src="bgWidgetLayerSrc" />
-          <Drr
-            v-for="(item, index) in avatarArray"
-            :key="index"
-            :index="index"
-            :x="item.x"
-            :y="item.y"
-            :w="item.width"
-            :h="item.height"
-            :aspectRatio="true"
-            @deleteSelf="deleteSelf"
-          >
-            <img class="avatar" :src="item.src" />
-          </Drr>
-        </div>
+        <!-- 挂件layer -->
+        <img class="layer-template" :src="bgWidgetLayerSrc" />
+        <!-- 头饰layer -->
+        <img class="layer-template head-wear" :src="bgHeadwearLayerSrc" />
+        <Drr
+          v-for="(item, index) in avatarArray"
+          :key="index"
+          :index="index"
+          :x="item.x"
+          :y="item.y"
+          :w="item.width"
+          :h="item.height"
+          :aspectRatio="true"
+          @deleteSelf="deleteSelf"
+        >
+          <img class="avatar" :src="item.src" />
+        </Drr>
       </div>
     </div>
 
-    <img class="preview" :src="previewSrc" />
     <div class="footer">
       <div class="footer-view">
         <div class="upload">
@@ -49,6 +48,7 @@ import domtoimage from 'dom-to-image-scale'
 import backgroundImage from '@/assets/background_layer.png'
 import backgroundBodyImage from '@/assets/background_body_layer.png'
 import backgroundWidgetImage from '@/assets/background_widget_layer.png'
+import backgroundHeadwearImage from '@/assets/background_headwear_layer.png'
 import avatar from '@/assets/avatar.png'
 import Drr from '@/components/Drr.vue'
 
@@ -60,6 +60,7 @@ export default {
       bgLayerSrc: backgroundImage,
       bgBodyLayerSrc: backgroundBodyImage,
       bgWidgetLayerSrc: backgroundWidgetImage,
+      bgHeadwearLayerSrc: backgroundHeadwearImage,
       avatarArray: [
         {
           x: 230,
@@ -142,20 +143,17 @@ export default {
 <style lang="scss" scoped>
 .diy-editor {
   position: relative;
-  // width: 100vw;
-  // height: 100vh;
-  overflow: auto;
+  width: 100vw;
+  height: 100vh;
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  // justify-content: center;
 
   .edit-container {
     position: relative;
     width: 100vw;
     height: 100vw;
-    // width: 2000px;
-    // height: 2000px;
     .layer-container {
       position: relative;
       width: 100%;
@@ -167,21 +165,18 @@ export default {
       top: 0;
       width: 100%;
       height: 100%;
+      pointer-events: none;
+    }
+
+    .head-wear {
+      z-index: 100;
     }
 
     .avatar {
-      z-index: 1;
+      z-index: 99;
       width: 100%;
       height: 100%;
     }
-  }
-
-  .preview {
-    position: relative;
-    // width: 100vw;
-    // height: 100vw;
-    width: 2000px;
-    height: 2000px;
   }
 
   .footer {
