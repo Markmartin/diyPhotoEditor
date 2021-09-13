@@ -7,7 +7,7 @@
         <!-- 身体挂件layer -->
         <img class="layer-template" :src="bgBodyLayerSrc" />
         <!-- 挂件layer -->
-        <img class="layer-template" :src="bgWidgetLayerSrc" />
+        <!-- <img class="layer-template" :src="bgWidgetLayerSrc" /> -->
         <!-- 头饰layer -->
         <img class="layer-template head-wear" :src="bgHeadwearLayerSrc" />
         <Drr
@@ -45,37 +45,60 @@
 <script>
 import domtoimage from 'dom-to-image-scale'
 
-import backgroundImage from '@/assets/background_layer.png'
-import backgroundBodyImage from '@/assets/background_body_layer.png'
-import backgroundWidgetImage from '@/assets/background_widget_layer.png'
-import backgroundHeadwearImage from '@/assets/background_headwear_layer.png'
+// import backgroundImage from '@/assets/background_layer.png'
+// import backgroundBodyImage from '@/assets/background_body_layer.png'
+// import backgroundWidgetImage from '@/assets/background_widget_layer.png'
+// import backgroundHeadwearImage from '@/assets/background_headwear_layer.png'
 import avatar from '@/assets/avatar.png'
 import Drr from '@/components/Drr.vue'
+
+import { apiSceneLayer } from '@/utils/api'
 
 export default {
   name: 'Editor',
   components: { Drr },
   data() {
     return {
-      bgLayerSrc: backgroundImage,
-      bgBodyLayerSrc: backgroundBodyImage,
-      bgWidgetLayerSrc: backgroundWidgetImage,
-      bgHeadwearLayerSrc: backgroundHeadwearImage,
+      // bgLayerSrc: backgroundImage,
+      // bgBodyLayerSrc: backgroundBodyImage,
+      // bgWidgetLayerSrc: backgroundWidgetImage,
+      // bgHeadwearLayerSrc: backgroundHeadwearImage,
+      bgLayerSrc: null,
+      bgBodyLayerSrc: null,
+      // bgWidgetLayerSrc: null,
+      bgHeadwearLayerSrc: null,
       avatarArray: [
-        {
-          x: 230,
-          y: 205,
-          width: 59,
-          height: 97,
-          rotation: 0,
-          src: avatar
-        }
+        // {
+        //   x: 230,
+        //   y: 205,
+        //   width: 59,
+        //   height: 97,
+        //   rotation: 0,
+        //   src: avatar
+        // }
       ],
       previewSrc: null
     }
   },
+  mounted() {
+    this.downloadLayer()
+  },
 
   methods: {
+    async downloadLayer() {
+      if (this.$route.query.id) {
+        const response = await apiSceneLayer(this.$route.query.id)
+        if (response.status) {
+          const { backgroundImage, headPartsImage, partsImage } = response.data
+          this.bgLayerSrc = `data:image/png;base64,${backgroundImage}`
+          this.bgBodyLayerSrc = `data:image/png;base64,${partsImage}`
+          this.bgHeadwearLayerSrc = `data:image/png;base64,${headPartsImage}`
+          // this.bgLayerSrc = backgroundImage
+          // this.bgBodyLayerSrc = partsImage
+          // this.bgHeadwearLayerSrc = headPartsImage
+        }
+      }
+    },
     fileChange(e) {
       if (e.target.files.length > 0) {
         const reader = new FileReader()
