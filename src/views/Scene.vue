@@ -12,13 +12,12 @@
 </template>
 
 <script>
-import sceneImage from '@/assets/scene.png'
 import { apiScene } from '@/utils/api'
 export default {
   name: 'Scene',
   data() {
     return {
-      scenes: [{ url: sceneImage }],
+      scenes: [],
       paper: {
         page: 0,
         size: 10,
