@@ -13,15 +13,35 @@ export const apiSceneLayer = async (id) =>
     url: `image/${id}`
   })
 
-export const apiUploadAvatar = async () => {
-  let formData = new FormData()
-  // formData.append('image', imagefile.files[0])
+export const apiUploadAvatar = async (file) => {
+  const formData = new FormData()
+  formData.append('fileName', file)
   return await baseRequest({
     method: 'post',
     url: 'head/upload',
-    'content-Type': 'multipart/form-data',
-    data: {
-      ...formData
-    }
+    headers: {
+      'content-Type': 'multipart/form-data'
+    },
+    data: formData
   })
 }
+
+export const apiUploadImage = async (file) => {
+  const formData = new FormData()
+  formData.append('fileName', file)
+  return await baseRequest({
+    method: 'post',
+    url: 'image/upload',
+    headers: {
+      'content-Type': 'multipart/form-data'
+    },
+    data: formData
+  })
+}
+
+export const apiOrder = async (data) =>
+  await baseRequest({
+    method: 'post',
+    url: 'order/save',
+    data
+  })

@@ -55,7 +55,11 @@ export default {
       this.loadScene()
     },
     gotoEditor(item) {
-      this.$router.push({ name: 'Editor', query: { id: item.id } })
+      if (!this.$route.query.orderNo) {
+        this.$toast.error({ position: 'top', message: '订单号不能为空' })
+        return
+      }
+      this.$router.push({ name: 'Editor', query: { id: item.id, orderNo: this.$route.query.orderNo } })
     }
   }
 }

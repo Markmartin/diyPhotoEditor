@@ -3,7 +3,7 @@ import Toast from 'muse-ui-toast'
 
 const httpService = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // api的base_url
-  timeout: 30000 // 请求超时时间
+  timeout: 60000 // 请求超时时间
 })
 
 const formatResponse = (status, data = {}, message = '', others = {}) => {

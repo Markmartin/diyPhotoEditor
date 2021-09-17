@@ -44,40 +44,21 @@
 
 <script>
 import domtoimage from 'dom-to-image-scale'
-
-// import backgroundImage from '@/assets/background_layer.png'
-// import backgroundBodyImage from '@/assets/background_body_layer.png'
-// import backgroundWidgetImage from '@/assets/background_widget_layer.png'
-// import backgroundHeadwearImage from '@/assets/background_headwear_layer.png'
-import avatar from '@/assets/avatar.png'
 import Drr from '@/components/Drr.vue'
-
-import { apiSceneLayer } from '@/utils/api'
+import { apiSceneLayer, apiUploadAvatar, apiUploadImage, apiOrder } from '@/utils/api'
 
 export default {
   name: 'Editor',
   components: { Drr },
   data() {
     return {
-      // bgLayerSrc: backgroundImage,
-      // bgBodyLayerSrc: backgroundBodyImage,
-      // bgWidgetLayerSrc: backgroundWidgetImage,
-      // bgHeadwearLayerSrc: backgroundHeadwearImage,
       bgLayerSrc: null,
       bgBodyLayerSrc: null,
       // bgWidgetLayerSrc: null,
       bgHeadwearLayerSrc: null,
-      avatarArray: [
-        // {
-        //   x: 230,
-        //   y: 205,
-        //   width: 59,
-        //   height: 97,
-        //   rotation: 0,
-        //   src: avatar
-        // }
-      ],
-      previewSrc: null
+      avatarArray: [],
+      previewSrc: null,
+      loading: null
     }
   },
   mounted() {
@@ -86,35 +67,43 @@ export default {
 
   methods: {
     async downloadLayer() {
-      if (this.$route.query.id) {
+      if (this.$route.query.id && this.$route.query.orderNo) {
+        this.loading = this.$loading()
+
         const response = await apiSceneLayer(this.$route.query.id)
         if (response.status) {
           const { backgroundImage, headPartsImage, partsImage } = response.data
           this.bgLayerSrc = `data:image/png;base64,${backgroundImage}`
           this.bgBodyLayerSrc = `data:image/png;base64,${partsImage}`
           this.bgHeadwearLayerSrc = `data:image/png;base64,${headPartsImage}`
-          // this.bgLayerSrc = backgroundImage
-          // this.bgBodyLayerSrc = partsImage
-          // this.bgHeadwearLayerSrc = headPartsImage
         }
+
+        this.loading.close()
       }
     },
-    fileChange(e) {
+    async fileChange(e) {
       if (e.target.files.length > 0) {
-        const reader = new FileReader()
-        reader.readAsDataURL(e.target.files[0])
-        reader.onload = function(readRes) {
-          this.avatarArray.push({
-            x: 230,
-            y: 205,
-            width: 59,
-            height: 97,
-            rotation: 0,
-            src: avatar || readRes.target.result
-          })
-          this.$refs['upload-input'].value = ''
-        }.bind(this)
+        const loading = this.$loading()
+        const response = await apiUploadAvatar(e.target.files[0])
+        if (response.status) {
+          console.log(response)
+          this.addAvatar(response.data)
+        }
+        loading.close()
+        this.$refs['upload-input'].value = ''
       }
+    },
+    addAvatar(avatar) {
+      const { width, height, file } = avatar
+      const avatarWidget = {
+        x: parseInt(this.screenWidth / 2),
+        y: parseInt(this.screenWidth / 2),
+        width: parseInt(this.screenWidth * 0.2),
+        height: parseInt((height * parseInt(this.screenWidth * 0.2)) / width),
+        rotation: 0,
+        src: `data:image/png;base64,${file}`
+      }
+      this.avatarArray.push(avatarWidget)
     },
     deleteSelf(index) {
       this.avatarArray.splice(index, 1)
@@ -123,41 +112,63 @@ export default {
       const firstDom = document.getElementById('fitst-layer')
       const secondDom = document.getElementById('second-layer')
 
-      domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(function(blob) {
-        const a = document.createElement('a')
-        const url = window.URL.createObjectURL(blob)
-        a.href = url
-        a.download = '生产图.png'
-        a.click()
-        window.URL.revokeObjectURL(url)
+      let fileUrlMap = new Map()
 
-        domtoimage.toBlob(secondDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(function(blob) {
-          const a = document.createElement('a')
-          const url = window.URL.createObjectURL(blob)
-          a.href = url
-          a.download = '身体挂件.png'
-          a.click()
-          window.URL.revokeObjectURL(url)
-        })
+      const _this = this
+
+      this.loading = this.$loading()
+
+      domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
+        const file = new window.File([blob], 'mainlayer.png', { type: 'image/png' })
+        const response = await apiUploadImage(file)
+        if (response.status) {
+          fileUrlMap.set('mainLayer', response.data)
+          if (fileUrlMap.size === 2) {
+            console.log('触发生成订单')
+            _this.generateOrder(fileUrlMap)
+          }
+        }
+
+        if (!response.status) {
+          this.loading.close()
+        }
       })
 
-      // domtoimage.toBlob(firstDom, { bgcolor: '#ffffff' }).then(function(blob) {
-      //   const a = document.createElement('a')
-      //   const url = window.URL.createObjectURL(blob)
-      //   a.href = url
-      //   a.download = 'first-dom.png'
-      //   a.click()
-      //   window.URL.revokeObjectURL(url)
-      // })
+      domtoimage.toBlob(secondDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
+        const file = new window.File([blob], 'attachlayer.png', { type: 'image/png' })
+        const response = await apiUploadImage(file)
+        if (response.status) {
+          fileUrlMap.set('attachLayer', response.data)
+          if (fileUrlMap.size === 2) {
+            console.log('触发生成订单')
+            _this.generateOrder(fileUrlMap)
+          }
+        }
 
-      // domtoimage.toBlob(thirdDom, { bgcolor: '#ffffff' }).then(function(blob) {
-      //   const a = document.createElement('a')
-      //   const url = window.URL.createObjectURL(blob)
-      //   a.href = url
-      //   a.download = 'third-dom.png'
-      //   a.click()
-      //   window.URL.revokeObjectURL(url)
-      // })
+        if (!response.status) {
+          this.loading.close()
+        }
+      })
+    },
+    async generateOrder(fileUrlMap) {
+      const response = await apiOrder({
+        orderNum: this.$route.query.orderNo,
+        backProduct: fileUrlMap.mainLayer,
+        composeProduct: fileUrlMap.attachLayer
+      })
+      this.loading.close()
+
+      if (response.status) {
+        this.$toast.success({ position: 'top', message: '图片提交成功' })
+      }
+    }
+  },
+  computed: {
+    screenWidth() {
+      return document.documentElement.clientWidth
+    },
+    screenHeight() {
+      return document.documentElement.clientHeight
     }
   }
 }

@@ -25,7 +25,11 @@ export default {
   },
   methods: {
     gotoScene() {
-      this.$router.push({ name: 'Scene' })
+      if (!this.orderNo) {
+        this.$toast.error({ position: 'top', message: '订单号不能为空' })
+        return
+      }
+      this.$router.push({ name: 'Scene', query: { orderNo: this.orderNo } })
     }
   }
 }
