@@ -69,7 +69,7 @@ export default {
     }
   },
   mounted() {
-    // this.downloadLayer()
+    this.downloadLayer()
   },
 
   methods: {
@@ -150,37 +150,71 @@ export default {
 
       this.loading = this.$loading()
 
-      domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
-        const file = new window.File([blob], 'mainlayer.png', { type: blob.type })
-        const response = await apiUploadImage(file)
-        if (response.status) {
-          fileUrlMap.set('mainLayer', response.data)
-          if (fileUrlMap.size === 2) {
-            console.log('触发生成订单')
-            _this.generateOrder(fileUrlMap)
+      domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(function() {
+        domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
+          const file = new window.File([blob], 'mainlayer.png', { type: blob.type })
+          const response = await apiUploadImage(file)
+          if (response.status) {
+            fileUrlMap.set('mainLayer', response.data)
+            if (fileUrlMap.size === 2) {
+              console.log('触发生成订单')
+              _this.generateOrder(fileUrlMap)
+            }
           }
-        }
 
-        if (!response.status) {
-          this.loading.close()
-        }
+          if (!response.status) {
+            this.loading.close()
+          }
+        })
+
+        domtoimage.toBlob(secondDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
+          const file = new window.File([blob], 'attachlayer.png', { type: 'image/png' })
+          const response = await apiUploadImage(file)
+          if (response.status) {
+            fileUrlMap.set('attachLayer', response.data)
+            if (fileUrlMap.size === 2) {
+              console.log('触发生成订单')
+              _this.generateOrder(fileUrlMap)
+            }
+          }
+
+          if (!response.status) {
+            this.loading.close()
+          }
+        })
       })
 
-      domtoimage.toBlob(secondDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
-        const file = new window.File([blob], 'attachlayer.png', { type: 'image/png' })
-        const response = await apiUploadImage(file)
-        if (response.status) {
-          fileUrlMap.set('attachLayer', response.data)
-          if (fileUrlMap.size === 2) {
-            console.log('触发生成订单')
-            _this.generateOrder(fileUrlMap)
-          }
-        }
+      // domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
+      //   const file = new window.File([blob], 'mainlayer.png', { type: blob.type })
+      //   const response = await apiUploadImage(file)
+      //   if (response.status) {
+      //     fileUrlMap.set('mainLayer', response.data)
+      //     if (fileUrlMap.size === 2) {
+      //       console.log('触发生成订单')
+      //       _this.generateOrder(fileUrlMap)
+      //     }
+      //   }
 
-        if (!response.status) {
-          this.loading.close()
-        }
-      })
+      //   if (!response.status) {
+      //     this.loading.close()
+      //   }
+      // })
+
+      // domtoimage.toBlob(secondDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
+      //   const file = new window.File([blob], 'attachlayer.png', { type: 'image/png' })
+      //   const response = await apiUploadImage(file)
+      //   if (response.status) {
+      //     fileUrlMap.set('attachLayer', response.data)
+      //     if (fileUrlMap.size === 2) {
+      //       console.log('触发生成订单')
+      //       _this.generateOrder(fileUrlMap)
+      //     }
+      //   }
+
+      //   if (!response.status) {
+      //     this.loading.close()
+      //   }
+      // })
     },
     async generateOrder(fileUrlMap) {
       const response = await apiOrder({
