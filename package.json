@@ -10,6 +10,7 @@
   "dependencies": {
     "@minogin/vector": "^1.0.2",
     "axios": "^0.21.4",
+    "compressorjs": "^1.0.7",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.7",
     "dom-to-image-scale": "^1.0.1",

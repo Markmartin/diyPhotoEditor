@@ -22,6 +22,7 @@
     ></div>
 
     <div class="ro-stick-handle" v-if="rotatable"></div>
+
     <div
       class="drr-stick-image"
       :class="[resizable ? '' : 'not-resizable']"
@@ -629,11 +630,11 @@ export default {
   box-sizing: border-box;
   position: absolute;
   font-size: 1px;
-  background: lightskyblue;
+  background: #4b96f7;
   border: 1px solid white;
   box-shadow: 0 0 2px #bbb;
   &:hover {
-    border-color: lightskyblue;
+    border-color: #4b96f7;
   }
   &.not-resizable {
     display: none;
@@ -715,21 +716,23 @@ export default {
 }
 
 .drr-stick-ro {
-  left: 50%;
+  left: calc(50% - 6px) !important;
+  top: -44px !important;
+  width: 20px !important;
+  height: 20px !important;
   cursor: ew-resize;
-  border-radius: 4px;
+  border-radius: 10px;
 }
 .ro-stick-handle {
   left: 50%;
-  top: -16px;
+  top: -25px;
   box-sizing: border-box;
   position: absolute;
-  font-size: 1px;
-  background: lightskyblue;
-  border: 1px solid lightskyblue;
+  font-size: 5px;
+  border: 1px solid #4b96f7;
   box-shadow: 0 0 2px #bbb;
-  width: 0px;
-  height: 16px;
+  width: 1px;
+  height: 25px;
 }
 .content-active {
   border: 2px solid lightskyblue;

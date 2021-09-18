@@ -30,7 +30,13 @@
       <div class="footer-view">
         <div class="upload">
           <div class="upload-text">上传头像照片</div>
-          <input ref="upload-input" class="upload-button" type="file" accept=".jpg, .jpeg, .png" @change="fileChange" />
+          <input
+            ref="upload-input"
+            class="upload-button"
+            type="file"
+            accept="image/jpeg,image/jpg,image/png"
+            @change="fileChange"
+          />
         </div>
       </div>
       <div class="footer-view">
@@ -44,8 +50,9 @@
 
 <script>
 import domtoimage from 'dom-to-image-scale'
+import Compressor from 'compressorjs'
 import Drr from '@/components/Drr.vue'
-import { apiSceneLayer, apiUploadAvatar, apiUploadImage, apiOrder } from '@/utils/api'
+import { apiSceneLayer, apiUploadImage, apiOrder, apiUploadAvatar } from '@/utils/api'
 
 export default {
   name: 'Editor',
@@ -62,7 +69,7 @@ export default {
     }
   },
   mounted() {
-    this.downloadLayer()
+    // this.downloadLayer()
   },
 
   methods: {
@@ -81,10 +88,35 @@ export default {
         this.loading.close()
       }
     },
+    compressImage(file) {
+      const scale = file.size < this.limitSize ? 1 : (this.limitSize / file.size).toFixed(2)
+
+      return new Promise((resolve) => {
+        new Compressor(file, {
+          quality: scale,
+          width: 1024,
+          height: 1024,
+          success(blob) {
+            resolve(new window.File([blob], blob.name, { type: blob.type }))
+          },
+          error(err) {
+            console.log(err)
+            resolve(null)
+          }
+        })
+      })
+    },
     async fileChange(e) {
       if (e.target.files.length > 0) {
+        const file = await this.compressImage(e.target.files[0])
+        if (!file) {
+          this.$refs['upload-input'].value = ''
+          this.$toast.error({ position: 'top', message: '图片压缩失败,请更换图片' })
+          return
+        }
+
         const loading = this.$loading()
-        const response = await apiUploadAvatar(e.target.files[0])
+        const response = await apiUploadAvatar(file)
         if (response.status) {
           console.log(response)
           this.addAvatar(response.data)
@@ -119,7 +151,7 @@ export default {
       this.loading = this.$loading()
 
       domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
-        const file = new window.File([blob], 'mainlayer.png', { type: 'image/png' })
+        const file = new window.File([blob], 'mainlayer.png', { type: blob.type })
         const response = await apiUploadImage(file)
         if (response.status) {
           fileUrlMap.set('mainLayer', response.data)
@@ -169,6 +201,9 @@ export default {
     },
     screenHeight() {
       return document.documentElement.clientHeight
+    },
+    limitSize() {
+      return 3 * 1024 * 1024
     }
   }
 }
