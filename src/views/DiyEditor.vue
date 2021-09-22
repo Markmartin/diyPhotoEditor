@@ -184,33 +184,6 @@ export default {
         })
       })
 
-      // domtoimage.toBlob(firstDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
-      //   const file = new window.File([blob], 'mainlayer.png', { type: blob.type })
-      //   const response = await apiUploadImage(file)
-      //   if (response.status) {
-      //     fileUrlMap.set('mainLayer', response.data)
-      //     if (fileUrlMap.size === 2) {
-      //       console.log('触发生成订单')
-      //       _this.generateOrder(fileUrlMap)
-      //     }
-      //   }
-
-      //   if (!response.status) {
-      //     this.loading.close()
-      //   }
-      // })
-
-      // domtoimage.toBlob(secondDom, { bgcolor: '#ffffff', width: 2000, height: 2000 }).then(async function(blob) {
-      //   const file = new window.File([blob], 'attachlayer.png', { type: 'image/png' })
-      //   const response = await apiUploadImage(file)
-      //   if (response.status) {
-      //     fileUrlMap.set('attachLayer', response.data)
-      //     if (fileUrlMap.size === 2) {
-      //       console.log('触发生成订单')
-      //       _this.generateOrder(fileUrlMap)
-      //     }
-      //   }
-
       //   if (!response.status) {
       //     this.loading.close()
       //   }
@@ -219,8 +192,8 @@ export default {
     async generateOrder(fileUrlMap) {
       const response = await apiOrder({
         orderNum: this.$route.query.orderNo,
-        backProduct: fileUrlMap.mainLayer,
-        composeProduct: fileUrlMap.attachLayer
+        backProduct: fileUrlMap.get('mainLayer'),
+        composeProduct: fileUrlMap.get('attachLayer')
       })
       this.loading.close()
 
